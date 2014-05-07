@@ -73,6 +73,7 @@ class SeqDepotTestCase(unittest.TestCase):
         self.assertEqual(2, len(results))
         self.assertEqual(894, results[0]['data']['l'])
         results = sd.find('naytI0dLM_rK2kaC1m3ZSQ', label_tool_data=True)
+        self.assertIn('acc', results[0]['data']['t']['pfam27'][0])
 
     def test_find_one(self):
         sd = seqdepot.SeqDepot()
@@ -121,29 +122,29 @@ class SeqDepotTestCase(unittest.TestCase):
     def test_is_tool_done(self):
         sd = seqdepot.SeqDepot()
         fixtures = [
-            [0, '', ''],
-            [0, 'bob', ''],
-            [0, None, None],
-            [0, 'pfam26', None],
-            [0, None, 'TTT'],
-            [1, 'agfam1', 'T'],
-            [1, 'agfam1', 'd'],
-            [0, 'agfam1', '-'],
-            [0, 'ecf', 'TTT'],
-            [1, 'ecf', 'TTdT'],
-            [1, 'ecf', 'TTdd'],
-            [1, 'ecf', 'TTdd-'],
-            [1, 'ecf', 'TTdd-T'],
-            [0, 'tigrfam', '------------------'],
-            [1, 'tigrfam', '-----------------T']]
-        i = 0
+            [False, '', ''],
+            [False, 'bob', ''],
+            [False, None, None],
+            [False, 'pfam26', None],
+            [False, None, 'TTT'],
+            [True, 'agfam1', 'T'],
+            [True, 'agfam1', 'd'],
+            [False, 'agfam1', '-'],
+            [False, 'ecf', 'TTT'],
+            [True, 'ecf', 'TTdT'],
+            [True, 'ecf', 'TTdd'],
+            [True, 'ecf', 'TTdd-'],
+            [True, 'ecf', 'TTdd-T'],
+            [False, 'tigrfam', '------------------'],
+            [True, 'tigrfam', '-----------------T']]
         for fixture in fixtures:
             expect, tool_id, status = fixture
-            i += 1
             if expect:
-                assert(sd.is_tool_done(tool_id, status))
+                self.assertTrue(sd.is_tool_done(tool_id, status),
+                                msg="{0} - {1}".format(tool_id, status))
             else:
-                assert(not sd.is_tool_done(tool_id, status))
+                self.assertFalse(sd.is_tool_done(tool_id, status),
+                                 msg="{0} - {1}".format(tool_id, status))
 
     def test_is_valid_aseq_id(self):
         fixtures = [
