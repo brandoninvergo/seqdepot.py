@@ -76,14 +76,14 @@ def clean_sequence(sequence):
     return sequence
 
 
-def is_valid_aseq_id(aseqId=None):
+def is_valid_aseq_id(aseq_id=None):
     """Return True if aseqId is validly formatted; False otherwise."""
-    if aseqId is None:
+    if aseq_id is None:
         return False
-    if re.match('[A-Za-z0-9_-]{22}$', aseqId):
+    if re.match('[A-Za-z0-9_-]{22}$', aseq_id):
         return True
     else:
-            return False
+        return False
 
 
 def is_valid_field_string(fields=None):
