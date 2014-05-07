@@ -356,7 +356,7 @@ class SeqDepot(object):
             return [header, sequence]
         return None
 
-    def save_image(self, idss = '', fileName = None, params = {}):
+    def save_image(self, idss='', file_name=None, **kwargs):
         """Save an image of the corresponding aseq.
 
         Parameters:
@@ -371,25 +371,24 @@ class SeqDepot(object):
         ids = str(idss)
         url = API_URL + '/aseqs/' + ids
         format_s = 'png'
-        self.clearError_()
-        if params != {}:
-            if list(params.keys()) == ['format']:
-                if params['format'] == 'svg':
-                    format_s = 'svg'
+        self._clear_error()
+        if len(kwargs) == 1 and 'format' in kwargs:
+            if kwargs['format'] == 'svg':
+                format_s = 'svg'
         url += '.' + format_s
-        stringyParams = self.urlParams_(params)
-        url += '?' + stringyParams
-        if fileName is None:
+        stringy_params = self._url_params(kwargs)
+        url += '?' + stringy_params
+        if file_name is None:
             fileName = ids + '.' + format_s
         response = self.lwpResponse(url)
         if response:
             if format_s == 'png':
-                output = open(fileName,'wb')
+                output = open(fileName, 'wb')
             else:
-                output = open(fileName,'w')
+                output = open(fileName, 'w')
             output.write(response.read())
             output.close()
-            return 1
+            return True
         else:
             return None
 
