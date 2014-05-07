@@ -78,7 +78,7 @@ def clean_sequence(sequence):
 
 def is_valid_aseq_id(aseqId=None):
     """Return True if aseqId is validly formatted; False otherwise."""
-    if aseqId == None:
+    if aseqId is None:
         return False
     if re.match('[A-Za-z0-9_-]{22}$', aseqId):
         return True
@@ -300,9 +300,9 @@ class new(object):
 
             Null is returned if toolId is not valid.
         """
-        if toolId == None:
+        if toolId is None:
             return False
-        if status == None:
+        if status is None:
             return False
 
         tools = self.tools()
@@ -548,6 +548,3 @@ by the Free Software Foundation; or the Artistic License.
 See http://docs.python.org/2/license.html for more information.
 
 """
-
-
-
