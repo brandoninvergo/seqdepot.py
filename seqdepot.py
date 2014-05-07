@@ -68,11 +68,11 @@ def clean_sequence(sequence):
         string
 
     """
-    if sequence.__class__ != str:
-        print('Missing sequence parameter')
-    else:
+    try:
         sequence = re.sub(r'\s', '', sequence)
         sequence = re.sub(r'\W|\d', '@', sequence)
+    except:
+        print('Missing sequence parameter')
     return sequence
 
 
