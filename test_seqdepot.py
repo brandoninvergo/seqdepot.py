@@ -5,20 +5,18 @@ import unittest
 import io
 import os
 
-class SeqDepotTestCase(unittest.TestCase):
 
+class SeqDepotTestCase(unittest.TestCase):
     def test_aseq_id_from_md5_hex(self):
         fixtures = [
             ['yg8A8H8N-4x1Ezf8WW-YbA', 'ca0f00f07f0dfb8c751337fc596f986c'],
             ['naytI0dLM_rK2kaC1m3ZSQ', '9dacad23474b33facada4682d66dd949'],
             ['GS8z3QwN5MzpxU0aTuxuaA', '192f33dd0c0de4cce9c54d1a4eec6e68']]
-
         for fixture in fixtures:
             aseq_id, md5_hex = fixture
             actual = seqdepot.aseq_id_from_md5_hex(md5_hex)
             self.assertEqual(aseq_id, actual)
-
-            #upper-case
+            # upper-case
             actual = seqdepot.aseq_id_from_md5_hex(md5_hex.upper())
             self.assertEqual(aseq_id, actual)
 
