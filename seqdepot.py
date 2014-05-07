@@ -16,51 +16,46 @@ VERSION = '0.01'
 
 
 def aseq_id_from_md5_hex(MD5hex):
-    """aseq_id_from_md5_hex
+    """Convert an MD5 hexadecimal string into its aseqId equivalent.
 
-Static method that converts an MD5 hexadecimal string into its aseqId
-equivalent.
+    Parameters:
+        MD5hex: hexadecimal MD5 string
 
-Parameters:
-  MD5hex: hexadecimal MD5 string
-
-Return:
-  aseqId
-
-"""
-
+    Return:
+        aseqId
+    """
     return base64.encodebytes(binascii.unhexlify(MD5hex.encode('utf-8'))).decode('utf-8').replace('/','_').replace('=','').replace('+','-').replace('\n','')
 
 
 def aseq_id_from_sequence(sequence):
-    """aseq_id_from_sequence
+    """Compute the aseqId for a given sequence.
 
-Static method for computing the aseqId for a given sequence. It is
-recommended that all sequences are cleaned before calling this method.
+    It is recommended that all sequences are cleaned before calling
+    this method.
 
-Parameters:
-  sequence
+    Parameters:
+        sequence
 
-Returns:
-  aseqId
-"""
+    Returns:
+        aseqId
+    """
     return base64.encodebytes(hashlib.md5(sequence.replace('-','').encode('utf-8')).digest()).decode('utf-8').replace('/','_').replace('=','').replace('+','-').replace('\n','')
 
 
 def clean_sequence(sequence):
-    """clean_sequence
+    """Clean up a sequence.
 
-Static method for removing all whitespace characters from sequence
-and replaces all digits or non-word characters with an ampersand
-character (for easy identification of invalid symbols).
+    This function removes all whitespace characters from sequence and
+    replaces all digits or non-word characters with an ampersand
+    character (for easy identification of invalid symbols).
 
-Parameters:
-  sequence: sequence character string
+    Parameters:
+        sequence: sequence character string
 
-Returns:
-  string
-"""
+    Returns:
+        string
 
+    """
     if sequence.__class__ != str:
         print('Missing sequence parameter')
     else:
@@ -69,10 +64,7 @@ Returns:
     return sequence
 
 def is_valid_aseq_id(aseqId = None):
-    """is_valid_aseq_id
-
-Static method that returns True if aseqId is validly formatted; False otherwise
-"""
+    """Return True if aseqId is validly formatted; False otherwise."""
     if aseqId == None:
         return False
     if re.match('[A-Za-z0-9_-]{22}$',aseqId):
@@ -81,16 +73,14 @@ Static method that returns True if aseqId is validly formatted; False otherwise
             return False
 
 def is_valid_field_string(fields=None):
-    """ is_valid_field_string
+    """Check if the requested field string is valid.
 
-Checks if the requested field string is valid.
+    Parameters:
+        fields
 
-Parameters:
-  fields
-
-Returns:
-  boolean
-"""
+    Returns:
+        boolean
+    """
     if not fields:
         return True
 
@@ -107,17 +97,14 @@ Returns:
     return True
 
 def md5_hex_from_aseq_id(aseqId = ''):
-    """ md5_hex_from_aseq_id
+    """Convert an aseqId to its equivalent MD5 hexadecimal representation.
 
-Static method that converts an aseqId to its equivalent MD5 hexadecimal
-representation.
+    Parameters:
+        aseqId
 
-Parameters:
-  aseqId
-
-Returns:
-  MD5 hexadecimal string
-"""
+    Returns:
+        MD5 hexadecimal string
+    """
     if aseqId == '':
         print("Missing aseqId parameter")
 
@@ -128,46 +115,34 @@ Returns:
     return binascii.hexlify(base64.decodebytes(aseqId.encode('utf-8'))).decode('utf-8')
 
 def md5_hex_from_sequence(sequence = ''):
-    """md5_hex_from_sequence
+    """Compute the hexadecimal MD5 digest for a given sequence.
 
-Static method for computing the hexadecimal MD5 digest for a given
-sequence. It is recommended that all sequences are cleaned before
-calling this method.
+    It is recommended that all sequences are cleaned before calling
+    this method.
 
-Parameters:
-  sequence
+    Parameters:
+        sequence
 
-Returns:
-  MD5 hexadecimal string
-"""
+    Returns:
+        MD5 hexadecimal string
+    """
     if sequence == '':
         print("Missing sequence parameter")
         return None
     return binascii.hexlify(hashlib.md5(sequence.encode('utf-8')).digest()).decode('utf-8')
 
 
-"""-------------------------------------------------------------------------------------------------------------------
-NAME:
-SeqDepot - SeqDepot database utility class
-
-SYNOPSIS:
-import SeqDepot
-
-DESCRIPTION:
-The SeqDepot class facilitates interacting with the public SeqDepot
-database via its RESTful interface. This package also provides helper
-methods such as a FASTA parser routine for working with sequences,
-and methods for manipulating identifiers.
-
-SUBROUTINES/METHODS:
-new
-
-Creates a new SeqDepot instance.
-
-"""
-
 
 class new(object):
+
+    """A SeqDepot database utility class
+
+    The SeqDepot class facilitates interacting with the public
+    SeqDepot database via its RESTful interface. This package also
+    provides helper methods such as a FASTA parser routine for working
+    with sequences, and methods for manipulating identifiers.
+    """
+
     def __init__(self):
         # Internal string buffer used for reading fasta sequences
         self.fastaBuffer = None
@@ -180,47 +155,50 @@ class new(object):
 
 
     def find(self, ids, params={}):
-        """ find
+        """Retrieve fields for aseqIds from SeqDepot.
 
-Retrieves fields for aseqIds from SeqDepot. All fields are returned
-by default; however, a subset may be returned by specifying the desired
-fields (see below).
+        All fields are returned by default; however, a subset may be
+        returned by specifying the desired fields (see below).
 
-Returns a mixed array of hashes or nulls, indicating whether the
-respective requested aseqId was found. Any nulls in the array indicate
-that the requested Aseq ID was not found - not that some other error
-occurred.
+        Returns a mixed array of hashes or nulls, indicating whether
+        the respective requested aseqId was found. Any nulls in the
+        array indicate that the requested Aseq ID was not found - not
+        that some other error occurred.
 
-Parameters:
-  ids: single or array of Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
+        Parameters:
+            ids: single or array of Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
 
-  dictionary: accepts the following fields
+            dictionary: accepts the following fields
 
-      type: <string> type of identifier defaults to aseq_id, but may also be
-        gi, uni, pdb, md5_hex
+            type: <string> type of identifier defaults to aseq_id, but
+                may also be gi, uni, pdb, md5_hex
 
-      fields (optional): comma-separated string of primary fields, secondary
-        fields must be listed in parentheses, separated with pipe (|)
-        symbols, and immediately suffix the respective primary field name.
-        For example:
+            fields (optional): comma-separated string of primary
+                fields, secondary fields must be listed in
+                parentheses, separated with pipe (|) symbols, and
+                immediately suffix the respective primary field name.
+                For example:
 
-          s,l   --> Returns the sequence and length primary fields
+                s,l   --> Returns the sequence and length primary fields
 
-          l,t,x --> Returns the length and all tool and cross-references
+                l,t,x --> Returns the length and all tool and cross-references
 
-          l,t(pfam26|smart) --> Returns the length primary field and pfam and
-            smart secondary fields of t
+                l,t(pfam26|smart) --> Returns the length primary field
+                    and pfam and smart secondary fields of t
 
-          l,t(pfam26|smart),x(gi) --> Same as the above plus any gi numbers
+                l,t(pfam26|smart),x(gi) --> Same as the above plus any
+                    gi numbers
 
-      labelToolData: <boolean> defaults to False; if True, converts any tool
-        data (the t field) into an array of dictionary with meaningful names.
+            labelToolData: <boolean> defaults to False; if True,
+                converts any tool data (the t field) into an array of
+                dictionary with meaningful names.
 
-Returns:
-  (null | mixed array of dictionary and nulls): dictionary if the given Aseq ID was
-    successfully located or null otherwise; null indicates that an
-    error occurred - call lastError() for details.
-"""
+        Returns: 
+            (null | mixed array of dictionary and nulls): dictionary
+                if the given Aseq ID was successfully located or null
+                otherwise; null indicates that an error occurred -
+                call lastError() for details.
+        """
         if ids.__class__ == list:
             ids_list = [str(i) for i in ids]
         elif ids.__class__ == str or ids.__class__ == int:
@@ -256,25 +234,25 @@ Returns:
         return results
 
     def find_one(self, ids, params={}):
-        """find_one
+        """Retrieve fields for aseqId from SeqDepot.
 
-Retrieves fields for aseqId from SeqDepot. All fields are returned
-by default; however, a subset may be returned by specifying the desired
-fields (see find for details).
+        All fields are returned by default; however, a subset may be
+        returned by specifying the desired fields (see find for
+        details).
 
-A null return value indicates that either the aseqId does not exist
-in SeqDepot or an error occurred. Call lastError() to retrieve
-details about any errors. If the aseqId does not exist, then
-lastError() will return null.
+        A null return value indicates that either the aseqId does not
+        exist in SeqDepot or an error occurred. Call lastError() to
+        retrieve details about any errors. If the aseqId does not
+        exist, then lastError() will return null.
 
-Parameters:
-  Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
-  params (optional, see find documentation)
+        Parameters:
+            Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
+            params (optional, see find documentation)
 
-Returns:
-  Dictionary if successfully found; null if not found or an error occurred -
-     call lastError() for details.
-"""
+        Returns:
+            Dictionary if successfully found; null if not found or an error occurred -
+            call lastError() for details.
+        """
         self.clearError_()
         ids = str(ids)
         url = API_URL + '/aseqs/' + ids
@@ -287,23 +265,23 @@ Returns:
         return result
 
     def is_tool_done(self, toolId = None, status = None):
-        """is_tool_done
+        """Return True if the requested tool has completed.
 
-Returns True if the requested tool has been marked as done from the
-status string. The status string corresponds to the _s field in
-SeqDepot and contains information about which predictive self.toolCache have
-been executed and whether any results were found with this tool. See
-the main documentation for more details.
+        The tool is marked as done from the status string. The status
+        string corresponds to the _s field in SeqDepot and contains
+        information about which predictive self.toolCache have been
+        executed and whether any results were found with this
+        tool. See the main documentation for more details.
 
-Parameters:
-  toolId <string>
-  status <string>
+        Parameters:
+            toolId <string>
+            status <string>
 
-Returns:
-  boolean
+        Returns:
+            boolean
 
-Null is returned if toolId is not valid.
-"""
+            Null is returned if toolId is not valid.
+        """
         if toolId == None:
             return False
         if status == None:
@@ -331,45 +309,42 @@ Null is returned if toolId is not valid.
 
 
     def lastError(self):
-        """lastError
+        """Return any error that may have occurred or null if there was no
+        error for the last find operation.
 
-Returns any error that may have occurred or null if there was no error
-for the last find operation.
-"""
+        """
         return self.lastError
 
 
     def prime_fasta_buffer(self, buffer):
-        """prime_fasta_buffer
+        """Set the internal fastaBuffer to the argument, fastaBuffer.
 
-Sets the internal fastaBuffer to the argument, fastaBuffer. This is useful
-when an input stream has already been partially read but not processed as
-part of the FASTA parsing. For example, when reading a line from STDIN to
-determine if it is FASTA data.
+        This is useful when an input stream has already been partially
+        read but not processed as part of the FASTA parsing. For
+        example, when reading a line from STDIN to determine if it is
+        FASTA data.
 
-Parameters:
-  fastaBuffer: <string>
-"""
+        Parameters:
+            fastaBuffer: <string>
+        """
         self.fastaBuffer = buffer
 
     def read_fasta_sequence(self, fh):
-        """read_fasta_sequence
+        """Read a FASTA-formatted sequence from an open file handle.
 
-Reads a FASTA-formatted sequence from an open file handle and returns
-an array containing the header and the cleaned sequence. The header
-will not contain the > symbol. Returns null if there are no more
-sequences to be read from the file.
+        An array containing the header and the cleaned sequence is
+        returned. The header will not contain the > symbol. Returns
+        null if there are no more sequences to be read from the file.
 
-Whitespace is trimmed from both ends of the header line.
+        Whitespace is trimmed from both ends of the header line.
 
-Parameters:
-  fh: non-null open filehandle
+        Parameters:
+            fh: non-null open filehandle
 
-Return:
-  Array containing the header and cleaned sequence if a sequence was
-    read; None otherwise
-
-"""
+        Return:
+            Array containing the header and cleaned sequence if a sequence was
+            read; None otherwise
+        """
         line = self.fastaBuffer if self.fastaBuffer else fh.readline()
         self.fastaBuffer = None
         while line:
@@ -401,31 +376,28 @@ Return:
         return None
 
     def reset_fasta_buffer(self):
-        """reset_fasta_buffer
+        """Clear the internal buffer used to read FASTA sequences.
 
-Clears the internal buffer used to read FASTA sequences. Call this
-method before read_fasta_sequence if all of the following are true:
-1) changing filehandles
-2) the filehandle has been partially read from
-3) the filehandle has not been completely read through to the end
-
-"""
+        Call this method before read_fasta_sequence if all of the
+        following are true:
+            1) changing filehandles
+            2) the filehandle has been partially read from
+            3) the filehandle has not been completely read through to the end
+        """
         self.fastaBuffer = None
 
     def save_image(self, idss = '', fileName = None, params = {}):
-        """save_image
+        """Save an image of the corresponding aseq.
 
-Saves an image of the corresponding aseq.
-
-Parameters:
-  id: <string|number> Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
-  fileName: <string> optional; defaults to the id with the appropriate
-    image extension
-  params: <dictionary>
-    fields => <string> see find documentation
-    type => type of id (aseq_id | gi | uni | pdb | md5_hex)
-    format => png | svg: type of image to save; defaults to png
-"""
+        Parameters:
+            id: <string|number> Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
+            fileName: <string> optional; defaults to the id with the
+                appropriate image extension
+            params: <dictionary>
+            fields => <string> see find documentation
+            type => type of id (aseq_id | gi | uni | pdb | md5_hex)
+            format => png | svg: type of image to save; defaults to png
+        """
         ids = str(idss)
         url = API_URL + '/aseqs/' + ids
         format_s = 'png'
@@ -452,18 +424,15 @@ Parameters:
             return None
 
     def tool_fields(self, toolName):
-        """tool_fields
+        """Return the field names associated with toolName.
 
-Returns the field names associated with toolName.
+        Parameters:
+            toolName: string of toolname
 
-Parameters:
-  toolName: string of toolname
-
-Returns:
-  array of strings (empty array if toolName is not valid) OR
-  None if an error occurred.
-
-"""
+        Returns:
+            array of strings (empty array if toolName is not valid) OR
+            None if an error occurred.
+        """
         self.toolCache = self.tools()
         if self.toolCache and toolName in list(self.toolCache.keys()):
             if self.toolCache[toolName]['f']:
@@ -474,10 +443,7 @@ Returns:
             return None
 
     def tools(self):
-        """tools()
-
-Returns dictionary of predictive self.toolCache available at SeqDepot
-"""
+        """Return dictionary of predictive toolCache available at SeqDepot."""
         if self.toolCache != None:
             return self.toolCache
         else:
@@ -494,10 +460,7 @@ Returns dictionary of predictive self.toolCache available at SeqDepot
         return self.toolCache
 
     def tool_names(self):
-        """tool_names
-
-Returns an array of tool names used by SeqDepot.
-"""
+        """Return an array of tool names used by SeqDepot."""
         return list(self.tools().keys())
 
 
