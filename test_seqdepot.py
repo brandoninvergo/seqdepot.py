@@ -103,19 +103,19 @@ class SeqDepotTestCase(unittest.TestCase):
         self.assertEqual(seq, obj['s'])
         # Attempt to get gis
         obj = sd.find_one(ids, fields='x(gi)')
-        assert(obj['x']['gi'])
-        assert(len(obj['x']['gi']) > 0)
+        self.assertIn('gi', obj['x'])
+        self.assertTrue(len(obj['x']['gi']) > 0)
         # Search via GI, PDB, UniProt, and MD5_Hex
         fixtures = {'gi': 1651302, 'uni': 'B1X6M6_ECODH',
                     'md5_hex': '9dacad23474b33facada4682d66dd949'}
         for fixture in fixtures:
             obj = sd.find_one(fixtures[fixture], fields='l', type=fixture)
-            assert(obj)
+            self.assertIsNotNone(obj)
             self.assertEqual(len(seq), obj['l'])
             self.assertEqual(ids, obj['id'])
         # now by pdb
         obj = sd.find_one('4dpk', fields='l', type='pdb')
-        assert(obj)
+        self.assertIsNotNone(obj)
         self.assertEqual(359, obj['l'])
         self.assertEqual('-0tNbPaXZtNA2gGW668Kqg', obj['id'])
 
@@ -148,49 +148,49 @@ class SeqDepotTestCase(unittest.TestCase):
 
     def test_is_valid_aseq_id(self):
         fixtures = [
-            [1, 'yg8A8H8N-4x1Ezf8WW-YbA'],
-            [0, 'yg8A8H8N-4x1Ezf8WW-Yb'],
-            [0, 'yg8A8H8N-4x1Ezf8WW-YbAA'],
-            [0, None],
-            [0, ''],
-            [0, 'yg8A8H8N-4x1Ezf8WW-Yb@']]
+            [True, 'yg8A8H8N-4x1Ezf8WW-YbA'],
+            [False, 'yg8A8H8N-4x1Ezf8WW-Yb'],
+            [False, 'yg8A8H8N-4x1Ezf8WW-YbAA'],
+            [False, None],
+            [False, ''],
+            [False, 'yg8A8H8N-4x1Ezf8WW-Yb@']]
         for fixture in fixtures:
             expect, inp = fixture
             actual = seqdepot.is_valid_aseq_id(inp)
             if expect:
-                assert(actual)
+                self.assertTrue(actual)
             else:
-                assert(not actual)
+                self.assertFalse(actual)
 
     def test_is_valid_field_string(self):
         fixtures = [
-            [1, ''],
-            [1, None],
-            [1, 's'],
-            [1, 'l'],
-            [0, '@'],
-            [0, '_!@#$'],
-            [0, '1234567'],
-            [0, '1A'],
-            [1, 'A1'],
-            [1, 's,l'],
-            [1, 's(l)'],
-            [0, 's()'],
-            [1, 's(l),s(l)'],
-            [1, 'a,b(c|d|e)'],
-            [1, 'a,b(c),d(e|f)'],
-            [0, 'a,b(c),d(e|@)'],
-            [0, 'a,b(c),d(@|f)'],
-            [0, 'a,b(@),d(e|f)'],
-            [0, 'a,b(c),d( |f)'],
-            [0, ' s']]
+            [True, ''],
+            [True, None],
+            [True, 's'],
+            [True, 'l'],
+            [False, '@'],
+            [False, '_!@#$'],
+            [False, '1234567'],
+            [False, '1A'],
+            [True, 'A1'],
+            [True, 's,l'],
+            [True, 's(l)'],
+            [False, 's()'],
+            [True, 's(l),s(l)'],
+            [True, 'a,b(c|d|e)'],
+            [True, 'a,b(c),d(e|f)'],
+            [False, 'a,b(c),d(e|@)'],
+            [False, 'a,b(c),d(@|f)'],
+            [False, 'a,b(@),d(e|f)'],
+            [False, 'a,b(c),d( |f)'],
+            [False, ' s']]
         for fixture in fixtures:
             expect, inp = fixture
             actual = seqdepot.is_valid_field_string(inp)
             if expect:
-                assert(actual)
+                self.assertTrue(actual)
             else:
-                assert(not actual)
+                self.assertFalse(actual)
 
     def test_md5_hex_from_aseq_id(self):
         fixtures = [
@@ -277,15 +277,15 @@ class SeqDepotTestCase(unittest.TestCase):
 
     def test_save_image(self):
         sd = seqdepot.SeqDepot()
-        assert(sd.save_image(3355692, None, type='gi'))
-        assert(os.path.isfile('3355692.png'))
-        assert(os.path.getsize('3355692.png') > 24)
+        self.assertTrue(sd.save_image(3355692, None, type='gi'))
+        self.assertTrue(os.path.isfile('3355692.png'))
+        self.assertTrue(os.path.getsize('3355692.png') > 24)
         os.remove('3355692.png')
 
     def test_tool_fields(self):
         sd = seqdepot.SeqDepot()
         self.assertIsNone(sd.tool_fields('bob'))
-        assert(sd.tool_fields('das'))
+        self.assertIsNotNone(sd.tool_fields('das'))
         names = sd.tool_fields('das')
         self.assertEqual(5, len(names))
         self.assertEqual('start', names[0])
@@ -300,14 +300,14 @@ class SeqDepotTestCase(unittest.TestCase):
         checks = {}
         for name in tool_names:
             checks[name] = 1
-        assert(checks['das'])
-        assert(checks['tigrfam'])
+        self.assertIn('das', checks)
+        self.assertIn('tigrfam', checks)
 
     def test_tools(self):
         sd = seqdepot.SeqDepot()
         tools = sd.tools()
-        assert(tools['das'])
-        assert(tools['ecf'])
+        self.assertIn('das', tools)
+        self.assertIn('ecf', tools)
 
 
 if __name__ == '__main__':
