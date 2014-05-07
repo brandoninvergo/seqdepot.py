@@ -42,7 +42,7 @@ def _aseq_id_from_base64(bytes64):
 
     trans_table = bytes64.maketrans(b'/+', b'_-')
     aseq_id = bytes64.translate(trans_table, b'=\n')
-    return aseq_id
+    return aseq_id.decode('utf-8')
 
 
 def aseq_id_from_md5_hex(md5_hex):
