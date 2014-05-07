@@ -468,7 +468,7 @@ class SeqDepot(object):
             result[tool_id] = hashes
         return result
 
-    def _lwp_response(self,request=None):
+    def _lwp_response(self, request=None):
         try:
             response = urllib.request.urlopen(request)
         except urllib.error.URLError as e:
