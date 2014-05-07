@@ -306,10 +306,11 @@ class SeqDepot(object):
         else:
             print("ToolId not recognized")
             return False
-        if isinstance(pos, int):
-            if pos < len(status):
-                if status[pos] != '-':
-                    return True
+        try:
+            if status[pos] != '-':
+                return True
+        except:
+            return False
         return False
 
     def read_fasta_sequence(self, fh):
