@@ -152,7 +152,7 @@ def md5_hex_from_sequence(sequence=''):
     return md5_hex.decode('utf-8')
 
 
-class new(object):
+class SeqDepot(object):
 
     """A SeqDepot database utility class
 
