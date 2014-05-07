@@ -413,18 +413,16 @@ class SeqDepot(object):
 
     def tools(self):
         """Return dictionary of predictive tool_cache available at SeqDepot."""
-        if self.tool_cache != None:
+        if self.tool_cache is not None:
             return self.tool_cache
         else:
-            content = self.lwpResponse(API_URL + '/tools.json').read()
-
-        orderedTools = json.loads(content.decode('utf-8'))['results']
-
+            content = self.lwp_response(API_URL + '/tools.json').read()
+        ordered_tools = json.loads(content.decode('utf-8'))['results']
         # Create a tool position lookup
-        for i in range(len(orderedTools)):
-            idt = orderedTools[i]['id']
+        for i in range(len(ordered_tools)):
+            idt = ordered_tools[i]['id']
             self.tool_position[idt] = i
-        myhash = { i['id']:i for i in orderedTools}
+        myhash = {i['id']: i for i in ordered_tools}
         self.tool_cache = myhash
         return self.tool_cache
 
