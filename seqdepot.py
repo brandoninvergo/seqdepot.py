@@ -164,13 +164,12 @@ class SeqDepot(object):
 
     def __init__(self):
         # Internal string buffer used for reading fasta sequences
-        self.fastaBuffer = None
+        self.fasta_buffer = None
         # Store any error here
-        self.lastError = None
+        self.last_error = None
         # After querying the REST api for tool info, cache the result
-        self.toolCache = None
-
-        self.toolPosition = {}
+        self.tool_cache = None
+        self.tool_position = {}
 
     def find(self, ids, params={}):
         """Retrieve fields for aseq_ids from SeqDepot.
@@ -215,7 +214,7 @@ class SeqDepot(object):
             (null | mixed array of dictionary and nulls): dictionary
                 if the given Aseq ID was successfully located or null
                 otherwise; null indicates that an error occurred -
-                call lastError() for details.
+                call last_error() for details.
         """
         if ids.__class__ == list:
             ids_list = [str(i) for i in ids]
@@ -261,9 +260,9 @@ class SeqDepot(object):
         details).
 
         A null return value indicates that either the aseq_id does not
-        exist in SeqDepot or an error occurred. Call lastError() to
+        exist in SeqDepot or an error occurred. Call last_error() to
         retrieve details about any errors. If the aseq_id does not
-        exist, then lastError() will return null.
+        exist, then last_error() will return null.
 
         Parameters:
             Aseq ID | GI | UniProt ID | PDB ID | MD5 hex
@@ -271,7 +270,7 @@ class SeqDepot(object):
 
         Returns:
             Dictionary if successfully found; null if not found or an
-            error occurred - call lastError() for details.
+            error occurred - call last_error() for details.
         """
         self.clearError_()
         ids = str(ids)
@@ -290,7 +289,7 @@ class SeqDepot(object):
 
         The tool is marked as done from the status string. The status
         string corresponds to the _s field in SeqDepot and contains
-        information about which predictive self.toolCache have been
+        information about which predictive self.tool_cache have been
         executed and whether any results were found with this
         tool. See the main documentation for more details.
 
@@ -309,19 +308,19 @@ class SeqDepot(object):
             return False
 
         tools = self.tools()
-        if not self.toolCache:
+        if not self.tool_cache:
             print('Unable to fetch tool metadata from SeqDepot: {0}'.format(
-                self.lastError);
+                self.last_error);
 
 #############PATCH - Handling wrong ToolID ##########################
-        if toolId in list(self.toolPosition.keys()):
-            pos = self.toolPosition[toolId]
+        if toolId in list(self.tool_position.keys()):
+            pos = self.tool_position[toolId]
         else:
             print("ToolId not recognized")
             return False
 #################END PATCH ##########################################
 #################ORIGINAL############################################
-#        pos = self.toolPosition[toolId]
+#        pos = self.tool_position[toolId]
 #####################################################################
         if pos.__class__ is int:
             if pos < len(status):
@@ -330,7 +329,7 @@ class SeqDepot(object):
         return False
 
     def prime_fasta_buffer(self, buffer):
-        """Set the internal fastaBuffer to the argument, fastaBuffer.
+        """Set the internal fasta_buffer to the argument, fasta_buffer.
 
         This is useful when an input stream has already been partially
         read but not processed as part of the FASTA parsing. For
@@ -338,9 +337,9 @@ class SeqDepot(object):
         FASTA data.
 
         Parameters:
-            fastaBuffer: <string>
+            fasta_buffer: <string>
         """
-        self.fastaBuffer = buffer
+        self.fasta_buffer = buffer
 
     def read_fasta_sequence(self, fh):
         """Read a FASTA-formatted sequence from an open file handle.
@@ -358,8 +357,8 @@ class SeqDepot(object):
             Array containing the header and cleaned sequence if a sequence was
             read; None otherwise
         """
-        line = self.fastaBuffer if self.fastaBuffer else fh.readline()
-        self.fastaBuffer = None
+        line = self.fasta_buffer if self.fasta_buffer else fh.readline()
+        self.fasta_buffer = None
         while line:
             if re.match('^\s*$', line):
                 line = fh.readline()
@@ -383,7 +382,7 @@ class SeqDepot(object):
 
             # We got the next header line. Save it for the next call
             # to this method.
-                self.fastaBuffer = line
+                self.fasta_buffer = line
                 break
 
             sequence = clean_sequence(sequence)
@@ -400,7 +399,7 @@ class SeqDepot(object):
             2) the filehandle has been partially read from
             3) the filehandle has not been completely read through to the end
         """
-        self.fastaBuffer = None
+        self.fasta_buffer = None
 
     def save_image(self, idss = '', fileName = None, params = {}):
         """Save an image of the corresponding aseq.
@@ -449,19 +448,19 @@ class SeqDepot(object):
             array of strings (empty array if toolName is not valid) OR
             None if an error occurred.
         """
-        self.toolCache = self.tools()
-        if self.toolCache and toolName in list(self.toolCache.keys()):
-            if self.toolCache[toolName]['f']:
-                return self.toolCache[toolName]['f']
+        self.tool_cache = self.tools()
+        if self.tool_cache and toolName in list(self.tool_cache.keys()):
+            if self.tool_cache[toolName]['f']:
+                return self.tool_cache[toolName]['f']
             else:
                 return None
         else:
             return None
 
     def tools(self):
-        """Return dictionary of predictive toolCache available at SeqDepot."""
-        if self.toolCache != None:
-            return self.toolCache
+        """Return dictionary of predictive tool_cache available at SeqDepot."""
+        if self.tool_cache != None:
+            return self.tool_cache
         else:
             content = self.lwpResponse(API_URL + '/tools.json').read()
 
@@ -470,10 +469,10 @@ class SeqDepot(object):
         # Create a tool position lookup
         for i in range(len(orderedTools)):
             idt = orderedTools[i]['id']
-            self.toolPosition[idt] = i
+            self.tool_position[idt] = i
         myhash = { i['id']:i for i in orderedTools}
-        self.toolCache = myhash
-        return self.toolCache
+        self.tool_cache = myhash
+        return self.tool_cache
 
     def tool_names(self):
         """Return an array of tool names used by SeqDepot."""
@@ -485,7 +484,7 @@ class SeqDepot(object):
         return
 
     def _clear_error(self):
-        self.lastError = None
+        self.last_error = None
 
     def _url_params(self, params = {}):
         #suggestion: Since there are only few valid type, why not
@@ -527,7 +526,7 @@ class SeqDepot(object):
             print('\n\nUnable to connect to server; ' +
                   'timeout or other internal error')
             error = json.loads(e.read().decode('utf-8'))
-            self.lastError = error['message']
+            self.last_error = error['message']
             return None
         return response
 
