@@ -312,7 +312,7 @@ class SeqDepot(object):
                     return True
         return False
 
-    def prime_fasta_buffer(self, buffer):
+    def prime_fasta_buffer(self, fasta_buffer):
         """Set the internal fasta_buffer to the argument, fasta_buffer.
 
         This is useful when an input stream has already been partially
@@ -323,7 +323,7 @@ class SeqDepot(object):
         Parameters:
             fasta_buffer: <string>
         """
-        self.fasta_buffer = buffer
+        self.fasta_buffer = fasta_buffer
 
     def read_fasta_sequence(self, fh):
         """Read a FASTA-formatted sequence from an open file handle.
@@ -347,15 +347,13 @@ class SeqDepot(object):
             if re.match('^\s*$', line):
                 line = fh.readline()
                 continue
-
             if line[0] != '>':
                 raise Exception(
                     'Invalid FASTA file. Header line must begin with a ' +
                     'greater than symbol\nLine: {0}'.format(line))
-
             line = re.sub('\s+$', '', line)
             header = line[1:]
-            header = re.sub('^\s+', '', header)#.decode('string_escape')
+            header = re.sub('^\s+', '', header)
             sequence = ''
             line = fh.readline()
             while line:
@@ -363,15 +361,12 @@ class SeqDepot(object):
                     sequence += line
                     line = fh.readline()
                     continue
-
             # We got the next header line. Save it for the next call
             # to this method.
                 self.fasta_buffer = line
                 break
-
             sequence = clean_sequence(sequence)
             return [header, sequence]
-
         return None
 
     def reset_fasta_buffer(self):
