@@ -228,7 +228,7 @@ class SeqDepot(object):
                 l,t(pfam26|smart),x(gi) --> Same as the above plus any
                     gi numbers
 
-            labelToolData: <boolean> defaults to False; if True,
+            label_tool_data: <boolean> defaults to False; if True,
                 converts any tool data (the t field) into an array of
                 dictionary with meaningful names.
 
@@ -236,7 +236,7 @@ class SeqDepot(object):
             (null | mixed array of dictionary and nulls): dictionary
                 if the given Aseq ID was successfully located or null
                 otherwise; null indicates that an error occurred -
-                call last_error() for details.
+                check last_error for details.
         """
         if isinstance(ids, list):
             ids_list = [str(i) for i in ids]
@@ -263,7 +263,9 @@ class SeqDepot(object):
             result = {'code': code, 'query': queryId}
             if code == 200:
                 result['data'] = json.loads(json_f)
-                if 'label_tool_data' in kwargs and 't' in result['data']:
+                if ('label_tool_data' in kwargs and
+                        kwargs['label_tool_data'] and
+                        't' in result['data']):
                     result['data']['t'] = self._label_tool_data(
                         result['data']['t'])
             results.append(result)

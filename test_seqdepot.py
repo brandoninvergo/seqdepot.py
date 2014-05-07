@@ -72,7 +72,7 @@ class SeqDepotTestCase(unittest.TestCase):
                            'GS8z3QwN5MzpxU0aTuxuaA'])
         self.assertEqual(2, len(results))
         self.assertEqual(894, results[0]['data']['l'])
-        results = sd.find('naytI0dLM_rK2kaC1m3ZSQ', label_tool_data=1)
+        results = sd.find('naytI0dLM_rK2kaC1m3ZSQ', label_tool_data=True)
 
     def test_find_one(self):
         sd = seqdepot.SeqDepot()
