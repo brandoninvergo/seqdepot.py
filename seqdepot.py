@@ -171,7 +171,7 @@ class SeqDepot(object):
         self.tool_cache = None
         self.tool_position = {}
 
-    def find(self, ids, params={}):
+    def find(self, ids, **kwargs):
         """Retrieve fields for aseq_ids from SeqDepot.
 
         All fields are returned by default; however, a subset may be
@@ -216,23 +216,19 @@ class SeqDepot(object):
                 otherwise; null indicates that an error occurred -
                 call last_error() for details.
         """
-        if ids.__class__ == list:
+        if isinstance(ids, list):
             ids_list = [str(i) for i in ids]
-        elif ids.__class__ == str or ids.__class__ == int:
+        elif isinstance(ids, str) or isinstance(ids, int):
             ids_list = [ids]
         else:
             print('Missing ids parameter or invalid id type (string or list)')
-
-        self.clearError_()
-
+        self._clear_error()
         url = API_URL + '/aseqs'
-        stringyParams = self.urlParams_(params)
-
+        stringy_params = self._url_params(kwargs)
         url += '?' + stringyParams
         data = '\n' + '\n'.join(ids_list)
         request = urllib.request.Request(url, data.encode('utf-8'))
-        content = self.lwpResponse(request).read()
-
+        content = self.lwp_response(request).read()
         results = []
         re_iter = re.finditer(r'(\S.*)', content.decode('utf-8'))
         for i in re_iter:
@@ -245,8 +241,7 @@ class SeqDepot(object):
             result = {'code': code, 'query': queryId}
             if code == 200:
                 result['data'] = json.loads(json_f)
-                if ('labelTooldata' in list(params.keys()) and
-                        't' in list(result['data'].keys())):
+                if 'label_tool_data' in kwargs and 't' in result['data']:
                     result['data']['t'] = self._label_tool_data(
                         result['data']['t'])
             results.append(result)
