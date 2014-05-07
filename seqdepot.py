@@ -392,7 +392,7 @@ class SeqDepot(object):
         else:
             return None
 
-    def tool_fields(self, toolName):
+    def tool_fields(self, tool_name):
         """Return the field names associated with toolName.
 
         Parameters:
@@ -403,9 +403,9 @@ class SeqDepot(object):
             None if an error occurred.
         """
         self.tool_cache = self.tools()
-        if self.tool_cache and toolName in list(self.tool_cache.keys()):
-            if self.tool_cache[toolName]['f']:
-                return self.tool_cache[toolName]['f']
+        if self.tool_cache and tool_name in self.tool_cache:
+            if self.tool_cache[tool_name]['f']:
+                return self.tool_cache[tool_name]['f']
             else:
                 return None
         else:
