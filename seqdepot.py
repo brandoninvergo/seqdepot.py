@@ -40,7 +40,7 @@ VERSION = '0.01'
 def _aseq_id_from_base64(bytes64):
     """Convert a base 64 bytes object to an aseq ID."""
 
-    trans_table = bytes64.maketrans('/+ ', '_-')
+    trans_table = bytes64.maketrans(b'/+', b'_-')
     aseq_id = bytes64.translate(trans_table, b'=\n')
     return aseq_id
 
@@ -71,7 +71,7 @@ def aseq_id_from_sequence(sequence):
     Returns:
         aseqId
     """
-    md5sum = hashlib.md5(sequence.translate(None, '-'))
+    md5sum = hashlib.md5(sequence.replace('-', '').encode('utf-8'))
     md5_bytes64 = base64.encodebytes(md5sum.digest())
     return _aseq_id_from_base64(md5_bytes64)
 
