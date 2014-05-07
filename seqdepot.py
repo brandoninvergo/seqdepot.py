@@ -1,16 +1,18 @@
 import json
-import sys
 import hashlib
 import base64
 import re
 import binascii
-import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.parse
+import urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 
 
 API_URL = 'http://seqdepot.net/api/v1'
 VERSION = '0.01'
-
 
 
 def aseqIdFromMD5Hex(MD5hex):
