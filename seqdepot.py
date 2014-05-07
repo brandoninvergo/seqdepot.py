@@ -247,7 +247,7 @@ class SeqDepot(object):
             results.append(result)
         return results
 
-    def find_one(self, ids, params={}):
+    def find_one(self, ids, **kwargs):
         """Retrieve fields for aseq_id from SeqDepot.
 
         All fields are returned by default; however, a subset may be
@@ -267,19 +267,18 @@ class SeqDepot(object):
             Dictionary if successfully found; null if not found or an
             error occurred - call last_error() for details.
         """
-        self.clearError_()
+        self._clear_error()
         ids = str(ids)
         url = API_URL + '/aseqs/' + ids
-        stringyParams = self.urlParams_(params)
+        stringyParams = self._url_params(params)
         url += '?' + stringyParams
-        content = self.lwpResponse(url).read()
+        content = self.lwp_response(url).read()
         result = json.loads(content.decode('utf-8'))
-        if ('labelTooldata' in list(params.keys()) and
-                't' in list(result.keys())):
-            result['t'] = self.labelToolData_(result['t'])
+        if 'labelTooldata' in kwargs and 't' in result:
+            result['t'] = self._label_tool_data(result['t'])
         return result
 
-    def is_tool_done(self, toolId=None, status=None):
+    def is_tool_done(self, tool_id=None, status=None):
         """Return True if the requested tool has completed.
 
         The tool is marked as done from the status string. The status
@@ -297,27 +296,17 @@ class SeqDepot(object):
 
             Null is returned if toolId is not valid.
         """
-        if toolId is None:
+        if tool_id is None or status is None:
             return False
-        if status is None:
-            return False
-
-        tools = self.tools()
         if not self.tool_cache:
             print('Unable to fetch tool metadata from SeqDepot: {0}'.format(
-                self.last_error);
-
-#############PATCH - Handling wrong ToolID ##########################
-        if toolId in list(self.tool_position.keys()):
-            pos = self.tool_position[toolId]
+                self.last_error))
+        if tool_id in self.tool_position:
+            pos = self.tool_position[tool_id]
         else:
             print("ToolId not recognized")
             return False
-#################END PATCH ##########################################
-#################ORIGINAL############################################
-#        pos = self.tool_position[toolId]
-#####################################################################
-        if pos.__class__ is int:
+        if isinstance(pos, int):
             if pos < len(status):
                 if status[pos] != '-':
                     return True
