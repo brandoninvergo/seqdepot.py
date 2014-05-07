@@ -452,21 +452,20 @@ class SeqDepot(object):
         par_list.append('type='+kwargs['type'])
         return '&'.join(par_list)
 
-    def _label_tool_data(self,t={}):
+    def _label_tool_data(self, t={}):
         result = {}
-        for toolId in list(t.keys()):
-            rows = t[toolId]
-            if rows.__class__ != list:
-                result[toolId] = rows
+        for tool_id in t:
+            rows = t[tool_id]
+            if not isinstance(rows, list):
+                result[tool_id] = rows
                 continue
-
-            fieldNames = self.tool_fields(toolId)
+            field_names = self.tool_fields(tool_id)
             hashes = []
             for i in rows:
                 myhash = {}
-                myhash[fieldNames] = row
+                myhash[field_names] = i
                 hashes.append(myhash)
-            result[toolId] = hashes
+            result[tool_id] = hashes
         return result
 
     def _lwp_response(self,request=None):
