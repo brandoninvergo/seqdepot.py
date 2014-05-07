@@ -128,7 +128,9 @@ def md5_hex_from_aseq_id(aseqId=''):
         print('Converting invalid Aseq ID: ' + aseqId)
     aseqId = aseqId.replace('-', '+').replace('_', '/')
     aseqId += '=' * (24 - len(aseqId))
-    return binascii.hexlify(base64.decodebytes(aseqId.encode('utf-8'))).decode('utf-8')
+    aseqId_bytes = aseqID.encode('utf-8')
+    aseqId_base64 = base64.decodebytes(aseqId_bytes)
+    return binascii.hexlify(aseqId_base64).decode('utf-8')
 
 
 def md5_hex_from_sequence(sequence=''):
@@ -146,7 +148,9 @@ def md5_hex_from_sequence(sequence=''):
     if sequence == '':
         print('Missing sequence parameter')
         return None
-    return binascii.hexlify(hashlib.md5(sequence.encode('utf-8')).digest()).decode('utf-8')
+    md5_sum = hashlib.md5(sequence.encode('utf-8'))
+    md5_hex = binascii.hexlify(md5_sum.digest())
+    return md5_hex.decode('utf-8')
 
 
 class new(object):
