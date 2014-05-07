@@ -225,7 +225,7 @@ class SeqDepot(object):
         self._clear_error()
         url = API_URL + '/aseqs'
         stringy_params = self._url_params(kwargs)
-        url += '?' + stringyParams
+        url += '?' + stringy_params
         data = '\n' + '\n'.join(ids_list)
         request = urllib.request.Request(url, data.encode('utf-8'))
         content = self._lwp_response(request).read()
@@ -270,7 +270,7 @@ class SeqDepot(object):
         self._clear_error()
         ids = str(ids)
         url = API_URL + '/aseqs/' + ids
-        stringyParams = self._url_params(params)
+        stringyParams = self._url_params(kwargs)
         url += '?' + stringyParams
         content = self._lwp_response(url).read()
         result = json.loads(content.decode('utf-8'))
