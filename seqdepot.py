@@ -18,8 +18,8 @@ VERSION = '0.01'
 def _aseq_id_from_base64(bytes64):
     """Convert a base 64 bytes object to an aseq ID."""
 
-    trans_table = bytes64.maketrans("/+ ", "_-")
-    aseq_id = bytes64.translate(trans_table, b"=\n")
+    trans_table = bytes64.maketrans('/+ ', '_-')
+    aseq_id = bytes64.translate(trans_table, b'=\n')
     return aseq_id
 
 
@@ -122,10 +122,10 @@ def md5_hex_from_aseq_id(aseqId=''):
         MD5 hexadecimal string
     """
     if aseqId == '':
-        print("Missing aseqId parameter")
+        print('Missing aseqId parameter')
 
     if not is_valid_aseq_id(aseqId):
-        print("Converting invalid Aseq ID: " + aseqId)
+        print('Converting invalid Aseq ID: ' + aseqId)
     aseqId = aseqId.replace('-', '+').replace('_', '/')
     aseqId += '=' * (24 - len(aseqId))
     return binascii.hexlify(base64.decodebytes(aseqId.encode('utf-8'))).decode('utf-8')
@@ -144,7 +144,7 @@ def md5_hex_from_sequence(sequence=''):
         MD5 hexadecimal string
     """
     if sequence == '':
-        print("Missing sequence parameter")
+        print('Missing sequence parameter')
         return None
     return binascii.hexlify(hashlib.md5(sequence.encode('utf-8')).digest()).decode('utf-8')
 
@@ -307,7 +307,7 @@ class new(object):
 
         tools = self.tools()
         if not self.toolCache:
-            print("Unable to fetch tool metadata from SeqDepot: {0}".format(
+            print('Unable to fetch tool metadata from SeqDepot: {0}'.format(
                 self.lastError);
 
 #############PATCH - Handling wrong ToolID ##########################
