@@ -228,7 +228,7 @@ class SeqDepot(object):
         url += '?' + stringyParams
         data = '\n' + '\n'.join(ids_list)
         request = urllib.request.Request(url, data.encode('utf-8'))
-        content = self.lwp_response(request).read()
+        content = self._lwp_response(request).read()
         results = []
         re_iter = re.finditer(r'(\S.*)', content.decode('utf-8'))
         for i in re_iter:
@@ -272,7 +272,7 @@ class SeqDepot(object):
         url = API_URL + '/aseqs/' + ids
         stringyParams = self._url_params(params)
         url += '?' + stringyParams
-        content = self.lwp_response(url).read()
+        content = self._lwp_response(url).read()
         result = json.loads(content.decode('utf-8'))
         if 'labelTooldata' in kwargs and 't' in result:
             result['t'] = self._label_tool_data(result['t'])
@@ -416,7 +416,7 @@ class SeqDepot(object):
         if self.tool_cache is not None:
             return self.tool_cache
         else:
-            content = self.lwp_response(API_URL + '/tools.json').read()
+            content = self._lwp_response(API_URL + '/tools.json').read()
         ordered_tools = json.loads(content.decode('utf-8'))['results']
         # Create a tool position lookup
         for i in range(len(ordered_tools)):
