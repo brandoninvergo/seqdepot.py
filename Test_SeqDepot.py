@@ -278,7 +278,7 @@ class SeqDepotTestCase(unittest.TestCase):
 
     def test_save_image(self):
         sd = seqdepot.SeqDepot()
-        assert(sd.save_image(3355692, None, {'type': 'gi'}))
+        assert(sd.save_image(3355692, None, type='gi'))
         assert(os.path.isfile('3355692.png'))
         assert(os.path.getsize('3355692.png') > 24)
         os.remove('3355692.png')
