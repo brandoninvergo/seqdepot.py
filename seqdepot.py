@@ -15,8 +15,8 @@ API_URL = 'http://seqdepot.net/api/v1'
 VERSION = '0.01'
 
 
-def aseqIdFromMD5Hex(MD5hex):
-    """aseqIdFromMD5Hex
+def aseq_id_from_md5_hex(MD5hex):
+    """aseq_id_from_md5_hex
 
 Static method that converts an MD5 hexadecimal string into its aseqId
 equivalent.
@@ -32,8 +32,8 @@ Return:
     return base64.encodebytes(binascii.unhexlify(MD5hex.encode('utf-8'))).decode('utf-8').replace('/','_').replace('=','').replace('+','-').replace('\n','')
 
 
-def aseqIdFromSequence(sequence):
-    """aseqIdFromSequence
+def aseq_id_from_sequence(sequence):
+    """aseq_id_from_sequence
 
 Static method for computing the aseqId for a given sequence. It is
 recommended that all sequences are cleaned before calling this method.
@@ -47,8 +47,8 @@ Returns:
     return base64.encodebytes(hashlib.md5(sequence.replace('-','').encode('utf-8')).digest()).decode('utf-8').replace('/','_').replace('=','').replace('+','-').replace('\n','')
 
 
-def cleanSequence(sequence):
-    """cleanSequence
+def clean_sequence(sequence):
+    """clean_sequence
 
 Static method for removing all whitespace characters from sequence
 and replaces all digits or non-word characters with an ampersand
@@ -68,8 +68,8 @@ Returns:
         sequence = re.sub(r'\W|\d','@',sequence)
     return sequence
 
-def isValidAseqId(aseqId = None):
-    """isValidAseqId
+def is_valid_aseq_id(aseqId = None):
+    """is_valid_aseq_id
 
 Static method that returns True if aseqId is validly formatted; False otherwise
 """
@@ -80,8 +80,8 @@ Static method that returns True if aseqId is validly formatted; False otherwise
     else:
             return False
 
-def isValidFieldString(fields=None):
-    """ isValidFieldString
+def is_valid_field_string(fields=None):
+    """ is_valid_field_string
 
 Checks if the requested field string is valid.
 
@@ -106,8 +106,8 @@ Returns:
                     return False
     return True
 
-def MD5HexFromAseqId(aseqId = ''):
-    """ MD5HexFromAseqId
+def md5_hex_from_aseq_id(aseqId = ''):
+    """ md5_hex_from_aseq_id
 
 Static method that converts an aseqId to its equivalent MD5 hexadecimal
 representation.
@@ -121,14 +121,14 @@ Returns:
     if aseqId == '':
         print("Missing aseqId parameter")
 
-    if not isValidAseqId(aseqId):
+    if not is_valid_aseq_id(aseqId):
         print("Converting invalid Aseq ID: " + aseqId)
     aseqId = aseqId.replace('-', '+').replace('_', '/')
     aseqId += '=' * (24 - len(aseqId))
     return binascii.hexlify(base64.decodebytes(aseqId.encode('utf-8'))).decode('utf-8')
 
-def MD5HexFromSequence(sequence = ''):
-    """MD5HexFromSequence
+def md5_hex_from_sequence(sequence = ''):
+    """md5_hex_from_sequence
 
 Static method for computing the hexadecimal MD5 digest for a given
 sequence. It is recommended that all sequences are cleaned before
@@ -255,8 +255,8 @@ Returns:
             results.append(result)
         return results
 
-    def findOne(self, ids, params={}):
-        """findOne
+    def find_one(self, ids, params={}):
+        """find_one
 
 Retrieves fields for aseqId from SeqDepot. All fields are returned
 by default; however, a subset may be returned by specifying the desired
@@ -286,8 +286,8 @@ Returns:
             result['t'] = self.labelToolData_(result['t'])
         return result
 
-    def isToolDone(self, toolId = None, status = None):
-        """isToolDone
+    def is_tool_done(self, toolId = None, status = None):
+        """is_tool_done
 
 Returns True if the requested tool has been marked as done from the
 status string. The status string corresponds to the _s field in
@@ -339,8 +339,8 @@ for the last find operation.
         return self.lastError
 
 
-    def primeFastaBuffer(self, buffer):
-        """primeFastaBuffer
+    def prime_fasta_buffer(self, buffer):
+        """prime_fasta_buffer
 
 Sets the internal fastaBuffer to the argument, fastaBuffer. This is useful
 when an input stream has already been partially read but not processed as
@@ -352,8 +352,8 @@ Parameters:
 """
         self.fastaBuffer = buffer
 
-    def readFastaSequence(self, fh):
-        """readFastaSequence
+    def read_fasta_sequence(self, fh):
+        """read_fasta_sequence
 
 Reads a FASTA-formatted sequence from an open file handle and returns
 an array containing the header and the cleaned sequence. The header
@@ -395,16 +395,16 @@ Return:
                 self.fastaBuffer = line
                 break
 
-            sequence = cleanSequence(sequence)
+            sequence = clean_sequence(sequence)
             return [header, sequence]
 
         return None
 
-    def resetFastaBuffer(self):
-        """resetFastaBuffer
+    def reset_fasta_buffer(self):
+        """reset_fasta_buffer
 
 Clears the internal buffer used to read FASTA sequences. Call this
-method before readFastaSequence if all of the following are true:
+method before read_fasta_sequence if all of the following are true:
 1) changing filehandles
 2) the filehandle has been partially read from
 3) the filehandle has not been completely read through to the end
@@ -412,8 +412,8 @@ method before readFastaSequence if all of the following are true:
 """
         self.fastaBuffer = None
 
-    def saveImage(self, idss = '', fileName = None, params = {}):
-        """saveImage
+    def save_image(self, idss = '', fileName = None, params = {}):
+        """save_image
 
 Saves an image of the corresponding aseq.
 
@@ -451,8 +451,8 @@ Parameters:
         else:
             return None
 
-    def toolFields(self, toolName):
-        """toolFields
+    def tool_fields(self, toolName):
+        """tool_fields
 
 Returns the field names associated with toolName.
 
@@ -493,8 +493,8 @@ Returns dictionary of predictive self.toolCache available at SeqDepot
         self.toolCache = myhash
         return self.toolCache
 
-    def toolNames(self):
-        """toolNames
+    def tool_names(self):
+        """tool_names
 
 Returns an array of tool names used by SeqDepot.
 """
@@ -505,17 +505,17 @@ Returns an array of tool names used by SeqDepot.
 #------------------------------------------------------------------------------------------------------
 # Private Methods:
 
-    def lwp_(self):
+    def _lwp(self):
         return
 
-    def clearError_(self):
+    def _clear_error(self):
         self.lastError = None
 
-    def urlParams_(self, params = {}):
+    def _url_params(self, params = {}):
         #suggestion: Since there are only few valid type, why not check prior to url submition?
         par_list = []
         if 'fields' in list(params.keys()):
-            if isValidFieldString(params['fields']):
+            if is_valid_field_string(params['fields']):
                 par_list.append('fields=' + params['fields'])
             else:
                 print('Invalid fields parameter')
@@ -526,7 +526,7 @@ Returns an array of tool names used by SeqDepot.
         par_list.append('type='+params['type'])
         return '&'.join(par_list)
 
-    def labelToolData_(self,t={}):
+    def _label_tool_data(self,t={}):
         result = {}
         for toolId in list(t.keys()):
             rows = t[toolId]
@@ -534,7 +534,7 @@ Returns an array of tool names used by SeqDepot.
                 result[toolId] = rows
                 continue
 
-            fieldNames = self.toolFields(toolId)
+            fieldNames = self.tool_fields(toolId)
             hashes = []
             for i in rows:
                 myhash = {}
@@ -543,7 +543,7 @@ Returns an array of tool names used by SeqDepot.
             result[toolId] = hashes
         return result
 
-    def lwpResponse(self,request=None):
+    def _lwp_response(self,request=None):
         try:
             response = urllib.request.urlopen(request)
         except urllib.error.URLError as e:
