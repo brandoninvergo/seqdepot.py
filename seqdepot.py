@@ -326,15 +326,6 @@ class new(object):
                     return True
         return False
 
-
-    def lastError(self):
-        """Return any error that may have occurred or null if there was no
-        error for the last find operation.
-
-        """
-        return self.lastError
-
-
     def prime_fasta_buffer(self, buffer):
         """Set the internal fastaBuffer to the argument, fastaBuffer.
 
