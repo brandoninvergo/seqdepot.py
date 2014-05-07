@@ -71,18 +71,20 @@ def clean_sequence(sequence):
     if sequence.__class__ != str:
         print('Missing sequence parameter')
     else:
-        sequence = re.sub(r'\s','', sequence)
-        sequence = re.sub(r'\W|\d','@',sequence)
+        sequence = re.sub(r'\s', '', sequence)
+        sequence = re.sub(r'\W|\d', '@', sequence)
     return sequence
 
-def is_valid_aseq_id(aseqId = None):
+
+def is_valid_aseq_id(aseqId=None):
     """Return True if aseqId is validly formatted; False otherwise."""
     if aseqId == None:
         return False
-    if re.match('[A-Za-z0-9_-]{22}$',aseqId):
+    if re.match('[A-Za-z0-9_-]{22}$', aseqId):
         return True
     else:
             return False
+
 
 def is_valid_field_string(fields=None):
     """Check if the requested field string is valid.
@@ -98,7 +100,8 @@ def is_valid_field_string(fields=None):
 
     primaries = str(fields).split(',')
     for primary in primaries:
-        p = re.match('^([A-Za-z_-][A-Za-z0-9-_]*)(?:\(([A-Za-z0-9-_|]+)\))?$', primary)
+        p = re.match('^([A-Za-z_-][A-Za-z0-9-_]*)(?:\(([A-Za-z0-9-_|]+)\))?$',
+                     primary)
         if not p:
             return False
 
@@ -108,7 +111,8 @@ def is_valid_field_string(fields=None):
                     return False
     return True
 
-def md5_hex_from_aseq_id(aseqId = ''):
+
+def md5_hex_from_aseq_id(aseqId=''):
     """Convert an aseqId to its equivalent MD5 hexadecimal representation.
 
     Parameters:
@@ -126,7 +130,8 @@ def md5_hex_from_aseq_id(aseqId = ''):
     aseqId += '=' * (24 - len(aseqId))
     return binascii.hexlify(base64.decodebytes(aseqId.encode('utf-8'))).decode('utf-8')
 
-def md5_hex_from_sequence(sequence = ''):
+
+def md5_hex_from_sequence(sequence=''):
     """Compute the hexadecimal MD5 digest for a given sequence.
 
     It is recommended that all sequences are cleaned before calling
@@ -142,7 +147,6 @@ def md5_hex_from_sequence(sequence = ''):
         print("Missing sequence parameter")
         return None
     return binascii.hexlify(hashlib.md5(sequence.encode('utf-8')).digest()).decode('utf-8')
-
 
 
 class new(object):
@@ -164,7 +168,6 @@ class new(object):
         self.toolCache = None
 
         self.toolPosition = {}
-
 
     def find(self, ids, params={}):
         """Retrieve fields for aseqIds from SeqDepot.
@@ -205,7 +208,7 @@ class new(object):
                 converts any tool data (the t field) into an array of
                 dictionary with meaningful names.
 
-        Returns: 
+        Returns:
             (null | mixed array of dictionary and nulls): dictionary
                 if the given Aseq ID was successfully located or null
                 otherwise; null indicates that an error occurred -
@@ -237,11 +240,13 @@ class new(object):
                 code = int(code)
             except ValueError:
                 code = None
-            result = { 'code':code, 'query':queryId}
+            result = {'code': code, 'query': queryId}
             if code == 200:
                 result['data'] = json.loads(json_f)
-                if 'labelTooldata' in list(params.keys()) and 't' in list(result['data'].keys()):
-                    result['data']['t'] = self.labelToolData_(result['data']['t'])
+                if ('labelTooldata' in list(params.keys()) and
+                        't' in list(result['data'].keys())):
+                    result['data']['t'] = self._label_tool_data(
+                        result['data']['t'])
             results.append(result)
         return results
 
@@ -262,8 +267,8 @@ class new(object):
             params (optional, see find documentation)
 
         Returns:
-            Dictionary if successfully found; null if not found or an error occurred -
-            call lastError() for details.
+            Dictionary if successfully found; null if not found or an
+            error occurred - call lastError() for details.
         """
         self.clearError_()
         ids = str(ids)
@@ -272,11 +277,12 @@ class new(object):
         url += '?' + stringyParams
         content = self.lwpResponse(url).read()
         result = json.loads(content.decode('utf-8'))
-        if 'labelTooldata' in list(params.keys()) and 't' in list(result.keys()):
+        if ('labelTooldata' in list(params.keys()) and
+                't' in list(result.keys())):
             result['t'] = self.labelToolData_(result['t'])
         return result
 
-    def is_tool_done(self, toolId = None, status = None):
+    def is_tool_done(self, toolId=None, status=None):
         """Return True if the requested tool has completed.
 
         The tool is marked as done from the status string. The status
@@ -301,7 +307,8 @@ class new(object):
 
         tools = self.tools()
         if not self.toolCache:
-            print("Unable to fetch tool metadata from SeqDepot: " + self.lastError + "\n");
+            print("Unable to fetch tool metadata from SeqDepot: {0}".format(
+                self.lastError);
 
 #############PATCH - Handling wrong ToolID ##########################
         if toolId in list(self.toolPosition.keys()):
@@ -365,7 +372,9 @@ class new(object):
                 continue
 
             if line[0] != '>':
-                raise Exception('Invalid FASTA file. Header line must begin with a greater than symbol\nLine: ' + line + '\n\n')
+                raise Exception(
+                    'Invalid FASTA file. Header line must begin with a ' +
+                    'greater than symbol\nLine: {0}'.format(line))
 
             line = re.sub('\s+$', '', line)
             header = line[1:]
@@ -378,7 +387,8 @@ class new(object):
                     line = fh.readline()
                     continue
 
-            # We got the next header line. Save it for the next call to this method.
+            # We got the next header line. Save it for the next call
+            # to this method.
                 self.fastaBuffer = line
                 break
 
@@ -475,10 +485,7 @@ class new(object):
         """Return an array of tool names used by SeqDepot."""
         return list(self.tools().keys())
 
-
-
-#------------------------------------------------------------------------------------------------------
-# Private Methods:
+    # Private Methods:
 
     def _lwp(self):
         return
@@ -487,7 +494,8 @@ class new(object):
         self.lastError = None
 
     def _url_params(self, params = {}):
-        #suggestion: Since there are only few valid type, why not check prior to url submition?
+        #suggestion: Since there are only few valid type, why not
+        #check prior to url submition?
         par_list = []
         if 'fields' in list(params.keys()):
             if is_valid_field_string(params['fields']):
@@ -522,7 +530,8 @@ class new(object):
         try:
             response = urllib.request.urlopen(request)
         except urllib.error.URLError as e:
-            print('\n\nUnable to connect to server; timeout or other internal error')
+            print('\n\nUnable to connect to server; ' +
+                  'timeout or other internal error')
             error = json.loads(e.read().decode('utf-8'))
             self.lastError = error['message']
             return None
