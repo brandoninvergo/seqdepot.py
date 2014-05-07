@@ -110,25 +110,26 @@ def is_valid_field_string(fields=None):
     return True
 
 
-def md5_hex_from_aseq_id(aseqId=''):
+def md5_hex_from_aseq_id(aseq_id=''):
     """Convert an aseqId to its equivalent MD5 hexadecimal representation.
 
     Parameters:
-        aseqId
+        aseq_id
 
     Returns:
         MD5 hexadecimal string
     """
-    if aseqId == '':
+    if not aseq_id:
         print('Missing aseqId parameter')
 
-    if not is_valid_aseq_id(aseqId):
-        print('Converting invalid Aseq ID: ' + aseqId)
-    aseqId = aseqId.replace('-', '+').replace('_', '/')
-    aseqId += '=' * (24 - len(aseqId))
-    aseqId_bytes = aseqID.encode('utf-8')
-    aseqId_base64 = base64.decodebytes(aseqId_bytes)
-    return binascii.hexlify(aseqId_base64).decode('utf-8')
+    if not is_valid_aseq_id(aseq_id):
+        print('Converting invalid Aseq ID: ' + aseq_id)
+    trans_table = aseq_id.maketrans('-_', '+/')
+    aseq_id = aseq_id.translate(trans_table)
+    aseq_id += '=' * (24 - len(aseq_id))
+    aseq_id_bytes = aseq_id.encode('utf-8')
+    aseq_id_base64 = base64.decodebytes(aseq_id_bytes)
+    return binascii.hexlify(aseq_id_base64).decode('utf-8')
 
 
 def md5_hex_from_sequence(sequence=''):
@@ -172,13 +173,13 @@ class new(object):
         self.toolPosition = {}
 
     def find(self, ids, params={}):
-        """Retrieve fields for aseqIds from SeqDepot.
+        """Retrieve fields for aseq_ids from SeqDepot.
 
         All fields are returned by default; however, a subset may be
         returned by specifying the desired fields (see below).
 
         Returns a mixed array of hashes or nulls, indicating whether
-        the respective requested aseqId was found. Any nulls in the
+        the respective requested aseq_id was found. Any nulls in the
         array indicate that the requested Aseq ID was not found - not
         that some other error occurred.
 
@@ -253,15 +254,15 @@ class new(object):
         return results
 
     def find_one(self, ids, params={}):
-        """Retrieve fields for aseqId from SeqDepot.
+        """Retrieve fields for aseq_id from SeqDepot.
 
         All fields are returned by default; however, a subset may be
         returned by specifying the desired fields (see find for
         details).
 
-        A null return value indicates that either the aseqId does not
+        A null return value indicates that either the aseq_id does not
         exist in SeqDepot or an error occurred. Call lastError() to
-        retrieve details about any errors. If the aseqId does not
+        retrieve details about any errors. If the aseq_id does not
         exist, then lastError() will return null.
 
         Parameters:
