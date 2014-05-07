@@ -312,19 +312,6 @@ class SeqDepot(object):
                     return True
         return False
 
-    def prime_fasta_buffer(self, fasta_buffer):
-        """Set the internal fasta_buffer to the argument, fasta_buffer.
-
-        This is useful when an input stream has already been partially
-        read but not processed as part of the FASTA parsing. For
-        example, when reading a line from STDIN to determine if it is
-        FASTA data.
-
-        Parameters:
-            fasta_buffer: <string>
-        """
-        self.fasta_buffer = fasta_buffer
-
     def read_fasta_sequence(self, fh):
         """Read a FASTA-formatted sequence from an open file handle.
 
@@ -368,17 +355,6 @@ class SeqDepot(object):
             sequence = clean_sequence(sequence)
             return [header, sequence]
         return None
-
-    def reset_fasta_buffer(self):
-        """Clear the internal buffer used to read FASTA sequences.
-
-        Call this method before read_fasta_sequence if all of the
-        following are true:
-            1) changing filehandles
-            2) the filehandle has been partially read from
-            3) the filehandle has not been completely read through to the end
-        """
-        self.fasta_buffer = None
 
     def save_image(self, idss = '', fileName = None, params = {}):
         """Save an image of the corresponding aseq.
