@@ -270,7 +270,6 @@ class SeqDepotTestCase(unittest.TestCase):
                 actual.append(seq)
                 seq = sd.read_fasta_sequence(fh)
             self.assertEqual(len(expect), len(actual))
-            i = 0
             for i in range(len(expect)):
                 self.assertEqual(expect[i][0], actual[i][0])
                 self.assertEqual(expect[i][1], actual[i][1])
