@@ -403,7 +403,7 @@ class SeqDepot(object):
         url += '?' + stringy_params
         if file_name is None:
             fileName = ids + '.' + format_s
-        response = self.lwpResponse(url)
+        response = self._lwp_response(url)
         if response:
             if format_s == 'png':
                 output = open(fileName, 'wb')
