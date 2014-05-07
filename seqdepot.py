@@ -486,9 +486,10 @@ class SeqDepot(object):
                 continue
             field_names = self.tool_fields(tool_id)
             hashes = []
-            for i in rows:
+            for row in rows:
                 myhash = {}
-                myhash[field_names] = i
+                for i, datum in enumerate(row):
+                    myhash[field_names[i]] = datum
                 hashes.append(myhash)
             result[tool_id] = hashes
         return result
