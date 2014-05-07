@@ -322,6 +322,7 @@ class SeqDepot(object):
         """
         if tool_id is None or status is None:
             return False
+        self.tool_cache = self.tools()
         if not self.tool_cache:
             print('Unable to fetch tool metadata from SeqDepot: {0}'.format(
                 self.last_error))
@@ -448,8 +449,7 @@ class SeqDepot(object):
             idt = ordered_tools[i]['id']
             self.tool_position[idt] = i
         myhash = {i['id']: i for i in ordered_tools}
-        self.tool_cache = myhash
-        return self.tool_cache
+        return myhash
 
     def tool_names(self):
         """Return an array of tool names used by SeqDepot."""
