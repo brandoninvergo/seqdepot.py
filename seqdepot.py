@@ -246,7 +246,7 @@ class SeqDepot(object):
             print('Missing ids parameter or invalid id type (string or list)')
         self._clear_error()
         url = API_URL + '/aseqs'
-        stringy_params = self._url_params(kwargs)
+        stringy_params = self._url_params(**kwargs)
         url += '?' + stringy_params
         data = '\n' + '\n'.join(ids_list)
         request = urllib.request.Request(url, data.encode('utf-8'))
@@ -292,7 +292,7 @@ class SeqDepot(object):
         self._clear_error()
         ids = str(ids)
         url = API_URL + '/aseqs/' + ids
-        stringyParams = self._url_params(kwargs)
+        stringyParams = self._url_params(**kwargs)
         url += '?' + stringyParams
         content = self._lwp_response(url).read()
         result = json.loads(content.decode('utf-8'))
@@ -399,7 +399,7 @@ class SeqDepot(object):
             if kwargs['format'] == 'svg':
                 format_s = 'svg'
         url += '.' + format_s
-        stringy_params = self._url_params(kwargs)
+        stringy_params = self._url_params(**kwargs)
         url += '?' + stringy_params
         if file_name is None:
             fileName = ids + '.' + format_s
