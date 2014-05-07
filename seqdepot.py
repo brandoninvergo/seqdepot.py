@@ -144,7 +144,7 @@ def md5_hex_from_sequence(sequence=''):
     Returns:
         MD5 hexadecimal string
     """
-    if sequence == '':
+    if not sequence:
         print('Missing sequence parameter')
         return None
     md5_sum = hashlib.md5(sequence.encode('utf-8'))
