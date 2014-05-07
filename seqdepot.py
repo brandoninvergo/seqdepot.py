@@ -80,7 +80,7 @@ def is_valid_aseq_id(aseq_id=None):
     """Return True if aseqId is validly formatted; False otherwise."""
     if aseq_id is None:
         return False
-    if re.match('[A-Za-z0-9_-]{22}$', aseq_id):
+    if re.match('[A-Za-z0-9_-]{22}$', aseq_id) is not None:
         return True
     else:
         return False
@@ -97,17 +97,15 @@ def is_valid_field_string(fields=None):
     """
     if not fields:
         return True
-
     primaries = str(fields).split(',')
     for primary in primaries:
         p = re.match('^([A-Za-z_-][A-Za-z0-9-_]*)(?:\(([A-Za-z0-9-_|]+)\))?$',
                      primary)
-        if not p:
+        if p is None:
             return False
-
         if p.groups()[1]:
-            for subField in p.groups()[1].split('|'):
-                if not subField:
+            for sub_field in p.groups()[1].split('|'):
+                if not sub_field:
                     return False
     return True
 
