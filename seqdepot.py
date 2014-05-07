@@ -1,5 +1,6 @@
 """AUTHOR
 
+Brandon Invergo, <brandon at invergo.net>
 Davi Ortega, <davi.ortega at gmail.com>
 Luke Ulrich, <ulrich.luke+sci at gmail.com>
 
