@@ -438,20 +438,18 @@ class SeqDepot(object):
     def _clear_error(self):
         self.last_error = None
 
-    def _url_params(self, params = {}):
-        #suggestion: Since there are only few valid type, why not
-        #check prior to url submition?
+    def _url_params(self, **kwargs):
+        # suggestion: Since there are only few valid type, why not
+        # check prior to url submition?
         par_list = []
-        if 'fields' in list(params.keys()):
-            if is_valid_field_string(params['fields']):
-                par_list.append('fields=' + params['fields'])
+        if 'fields' in kwargs:
+            if is_valid_field_string(kwargs['fields']):
+                par_list.append('fields='+kwargs['fields'])
             else:
                 print('Invalid fields parameter')
-
-        if 'type' not in list(params.keys()):
-            params['type'] = 'aseq_id'
-
-        par_list.append('type='+params['type'])
+        if 'type' not in kwargs:
+            kwargs['type'] = 'aseq_id'
+        par_list.append('type='+kwargs['type'])
         return '&'.join(par_list)
 
     def _label_tool_data(self,t={}):
