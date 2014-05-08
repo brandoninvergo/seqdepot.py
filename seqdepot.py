@@ -100,7 +100,7 @@ def clean_sequence(sequence):
     return sequence
 
 
-def is_valid_aseq_id(aseq_id=None):
+def is_valid_aseq_id(aseq_id):
     """Return True if aseqId is validly formatted; False otherwise."""
     if aseq_id is None:
         return False
@@ -110,7 +110,7 @@ def is_valid_aseq_id(aseq_id=None):
         return False
 
 
-def is_valid_field_string(fields=None):
+def is_valid_field_string(fields):
     """Check if the requested field string is valid.
 
     Parameters:
@@ -119,7 +119,7 @@ def is_valid_field_string(fields=None):
     Returns:
         boolean
     """
-    if not fields:
+    if fields is None or not fields:
         return True
     primaries = str(fields).split(',')
     for primary in primaries:
@@ -134,7 +134,7 @@ def is_valid_field_string(fields=None):
     return True
 
 
-def md5_hex_from_aseq_id(aseq_id=''):
+def md5_hex_from_aseq_id(aseq_id):
     """Convert an aseqId to its equivalent MD5 hexadecimal representation.
 
     Parameters:
@@ -145,7 +145,6 @@ def md5_hex_from_aseq_id(aseq_id=''):
     """
     if not aseq_id:
         print('Missing aseqId parameter')
-
     if not is_valid_aseq_id(aseq_id):
         print('Converting invalid Aseq ID: ' + aseq_id)
     trans_table = aseq_id.maketrans('-_', '+/')
@@ -156,7 +155,7 @@ def md5_hex_from_aseq_id(aseq_id=''):
     return binascii.hexlify(aseq_id_base64).decode('utf-8')
 
 
-def md5_hex_from_sequence(sequence=''):
+def md5_hex_from_sequence(sequence):
     """Compute the hexadecimal MD5 digest for a given sequence.
 
     It is recommended that all sequences are cleaned before calling
@@ -304,7 +303,7 @@ class SeqDepot(object):
             result['t'] = self._label_tool_data(result['t'])
         return result
 
-    def is_tool_done(self, tool_id=None, status=None):
+    def is_tool_done(self, tool_id, status):
         """Return True if the requested tool has completed.
 
         The tool is marked as done from the status string. The status
@@ -384,7 +383,7 @@ class SeqDepot(object):
             return [header, sequence]
         return None
 
-    def save_image(self, idss='', file_name=None, **kwargs):
+    def save_image(self, idss, file_name=None, **kwargs):
         """Save an image of the corresponding aseq.
 
         Parameters:
@@ -396,7 +395,10 @@ class SeqDepot(object):
             type => type of id (aseq_id | gi | uni | pdb | md5_hex)
             format => png | svg: type of image to save; defaults to png
         """
-        ids = str(idss)
+        try:
+            ids = str(idss)
+        except:
+            return None
         url = API_URL + '/aseqs/' + ids
         format_s = 'png'
         self._clear_error()
@@ -479,7 +481,7 @@ class SeqDepot(object):
         par_list.append('type='+kwargs['type'])
         return '&'.join(par_list)
 
-    def _label_tool_data(self, t={}):
+    def _label_tool_data(self, t):
         result = {}
         for tool_id in t:
             rows = t[tool_id]
@@ -496,7 +498,7 @@ class SeqDepot(object):
             result[tool_id] = hashes
         return result
 
-    def _lwp_response(self, request=None):
+    def _lwp_response(self, request):
         try:
             response = urllib.request.urlopen(request)
         except urllib.error.URLError as e:
