@@ -40,11 +40,11 @@ API_URL = u'http://seqdepot.net/api/v1'
 VERSION = u'0.01'
 
 
-def _aseq_id_from_base64(bytes64):
+def _aseq_id_from_md5_bytes(md5_bytes):
     u"""Convert a base 64 bytes object to an aseq ID."""
 
-    trans_table = string.maketrans('/+', '_-')
-    aseq_id = bytes64.translate(trans_table, '=\n')
+    md5_bytes64 = base64.urlsafe_b64encode(md5_bytes)
+    aseq_id = md5_bytes64.replace(b'=', b'')
     return aseq_id.decode(u'utf-8')
 
 
@@ -58,8 +58,8 @@ def aseq_id_from_md5_hex(md5_hex):
         aseqId
     """
     md5_bytes = binascii.unhexlify(md5_hex)
-    md5_bytes64 = base64.encodestring(md5_bytes)
-    return _aseq_id_from_base64(md5_bytes64)
+    aseq_id = _aseq_id_from_md5_bytes(md5_bytes)
+    return aseq_id
 
 
 def aseq_id_from_sequence(sequence):
@@ -74,9 +74,10 @@ def aseq_id_from_sequence(sequence):
     Returns:
         aseqId
     """
-    md5sum = hashlib.md5(sequence.replace(u'-', u'').encode(u'utf-8'))
-    md5_bytes64 = base64.encodestring(md5sum.digest())
-    return _aseq_id_from_base64(md5_bytes64)
+    md5 = hashlib.md5(sequence.replace(u'-', u'').encode(u'utf-8'))
+    md5_bytes = md5.digest()
+    aseq_id = _aseq_id_from_md5_bytes(md5_bytes)
+    return aseq_id
 
 
 def clean_sequence(sequence):
